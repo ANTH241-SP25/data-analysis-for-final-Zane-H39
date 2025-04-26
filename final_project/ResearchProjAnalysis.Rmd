@@ -1,0 +1,487 @@
+---
+title: "FinalProjAnalysis"
+output: html_document
+date: "2025-04-17"
+---
+
+```{r}
+count(ResearchProjNHANESdata, HHIncome)
+count(ResearchProjNHANESdata, FeelBadYN)
+count(ResearchProjNHANESdata, SuicidalYN)
+count(ResearchProjNHANESdata, DoneDrugs)
+count(ResearchProjNHANESdata, AgeCocaine)
+count(ResearchProjNHANESdata, HomeSituation)
+count(ResearchProjNHANESdata, OverallHealth)
+count(ResearchProjNHANESdata, SleepHours)
+```
+Here, I'm simply creating counts for the various variables with which I will be working. I'm working with a rather small dependent variable sample, with only 1222 saying that they do feel bad and a much smaller 192 saying that they feel suicidal in any capacity. Interestingly, though not particularly useful I don't believe, the most popular age to first do cocaine is 18 with 64 respondents answering as such. 
+
+```{r}
+ResearchProjNHANESdata%>%
+  drop_na(SuicidalYN)%>%
+ggplot(aes(x=SuicidalYN)) + geom_bar(fill="darkgreen") + labs(title="Suicidal or Not? (NAs dropped)", x="", y="Count")
+
+ResearchProjNHANESdata%>%
+  drop_na(HHIncome)%>%
+ggplot(aes(x=HHIncome)) + geom_bar(fill="white") + labs(title="Annual Household Income(NAs dropped)", x="", y="Count")
+
+ResearchProjNHANESdata%>%
+  drop_na(DoneDrugs)%>%
+ggplot(aes(x=DoneDrugs)) + geom_bar(fill="red") + labs(title="Have you ever done drugs? (NAs dropped)", x="", y="Count")
+
+ggplot(ResearchProjNHANESdata, aes(x=AgeCocaine)) + geom_bar(fill="darkgreen") + labs(title="Age Done Cocaine", x="", y="Count")
+
+ResearchProjNHANESdata%>%
+  drop_na(HomeSituation)%>%
+ggplot(aes(x=HomeSituation)) + geom_bar(fill="white") + labs(title="What is your home situation? (NAs dropped)", x="", y="Count")
+
+ResearchProjNHANESdata%>%
+  drop_na(OverallHealth)%>%
+ggplot(aes(x=OverallHealth)) + geom_bar(fill="red") + labs(title="How would you describe your overall health? (NAs dropped)", x="", y="Count")
+
+ggplot(ResearchProjNHANESdata, aes(x=SleepHours)) + geom_bar(fill="darkgreen") + labs(title="Average Sleep per Night", x="", y="Count")
+
+ResearchProjNHANESdata%>%
+  drop_na(FeelBadYN)%>%
+ ggplot(aes(x=FeelBadYN)) + geom_bar(fill = "white") + labs(title= "Feel Bad or Not? (NAs dropped", x = "", y = "Count")
+```
+Here, I created graphs demonstrating the distribution of the values of the various variables under examination. 
+
+```{r}
+median(ResearchProjNHANESdata$SleepHours, na.rm = TRUE)
+range(ResearchProjNHANESdata$SleepHours, na.rm = TRUE)
+median(ResearchProjNHANESdata$AgeCocaine, na.rm = TRUE)
+range(ResearchProjNHANESdata$AgeCocaine, na.rm = TRUE)
+
+ResearchProjNHANESdata%>% 
+  drop_na(SleepHours)%>% 
+  summarise(mean(SleepHours), sd(SleepHours), count=n())
+ResearchProjNHANESdata%>% 
+  drop_na(AgeCocaine)%>% 
+  summarise(mean(AgeCocaine), sd(AgeCocaine), count=n())
+```
+Here, I'm identifying the mean, median, and ranges for my two continuous variables (SleepHours and AgeCocaine) and then also the standard deviation and again the count as in the above data chunk. 
+
+```{r}
+#mytable <- with(data, table(variable))
+DoneDrugstable <- with(ResearchProjNHANESdata, table(DoneDrugs))
+DoneDrugstable
+#turn the table into percentages using prop.table(mytable)*100
+prop.table(DoneDrugstable)*100
+
+HomeSituationtable <- with(ResearchProjNHANESdata, table(HomeSituation))
+HomeSituationtable
+prop.table(HomeSituationtable)*100
+
+OverallHealthtable <- with(ResearchProjNHANESdata, table(OverallHealth))
+OverallHealthtable
+prop.table(OverallHealthtable)*100
+
+SuicidalYNtable <- with(ResearchProjNHANESdata, table(SuicidalYN))
+SuicidalYNtable
+prop.table(SuicidalYNtable)*100
+
+FeelBadYNtable <- with(ResearchProjNHANESdata, table(FeelBadYN))
+FeelBadYNtable
+prop.table(FeelBadYNtable)*100
+
+SleepHourstable <- with(ResearchProjNHANESdata, table(SleepHours))
+SleepHourstable
+prop.table(SleepHourstable)*100
+
+AgeCocainetable <- with(ResearchProjNHANESdata, table(AgeCocaine))
+AgeCocainetable
+prop.table(AgeCocainetable)*100
+
+HHIncometable <- with(ResearchProjNHANESdata, table(HHIncome))
+HHIncometable
+prop.table(HHIncometable)*100
+```
+Here, I am once again demonstrating counts as well as creating data tables for bivariate analysis below. Additionally, this descriptive statistical code provides percentages (prop.table(TableName)*100). 
+
+```{r}
+DoneDrugs_SuicidalYNtable <- xtabs(~ DoneDrugs + SuicidalYN, data=ResearchProjNHANESdata)
+DoneDrugs_SuicidalYNtable
+
+DoneDrugs_FeelBadYNtable <- xtabs(~ DoneDrugs + FeelBadYN, data=ResearchProjNHANESdata)
+DoneDrugs_FeelBadYNtable
+
+HHIncome_SuicidalYNtable <- xtabs(~ HHIncome + SuicidalYN, data=ResearchProjNHANESdata)
+HHIncome_SuicidalYNtable
+
+HHIncome_FeelBadYNtable <- xtabs(~ HHIncome + FeelBadYN, data=ResearchProjNHANESdata)
+HHIncome_FeelBadYNtable
+
+AgeCocaine_SuicidalYNtable <- xtabs(~ AgeCocaine + SuicidalYN, data = ResearchProjNHANESdata)
+AgeCocaine_SuicidalYNtable
+
+AgeCocaine_FeelBadYNtable <- xtabs(~ AgeCocaine + FeelBadYN, data = ResearchProjNHANESdata)
+AgeCocaine_FeelBadYNtable
+
+SleepHours_SuicidalYNtable <- xtabs(~ SleepHours + SuicidalYN, data = ResearchProjNHANESdata)
+SleepHours_SuicidalYNtable
+
+SleepHours_FeelBadYNtable <- xtabs(~ SleepHours + FeelBadYN, data = ResearchProjNHANESdata)
+SleepHours_FeelBadYNtable
+
+HomeSituation_SuicidalYNtable <- xtabs(~ HomeSituation + SuicidalYN, data = ResearchProjNHANESdata)
+HomeSituation_SuicidalYNtable
+
+HomeSituation_FeelBadYNtable <- xtabs(~ HomeSituation + FeelBadYN, data = ResearchProjNHANESdata)
+HomeSituation_FeelBadYNtable
+
+OverallHealth_FeelBadYNtable <- xtabs(~ OverallHealth + FeelBadYN, data=ResearchProjNHANESdata)
+OverallHealth_FeelBadYNtable
+```
+In this code chunk, I am creating bivariate statistical tables between various independent variables and my dependent variables (FeelBadYN and SuicidalYN). I will later do other, more complex statistical tests to determine whether or not the differences in rates are significant. Just looking at it right now, most of the distributions of the dependent variables appear to line up pretty well with the overall distribution, making me think that the variation may not be statistically significant. However, for HomeSituation, the "Other" category does appear to exhibit greater rates of both suicidalness as well as depression. 
+
+```{r}
+prop.table(DoneDrugs_SuicidalYNtable)*100
+prop.table(DoneDrugs_FeelBadYNtable)*100
+prop.table(HHIncome_SuicidalYNtable)*100
+prop.table(HHIncome_FeelBadYNtable)*100
+prop.table(AgeCocaine_SuicidalYNtable)*100
+prop.table(AgeCocaine_FeelBadYNtable)*100
+prop.table(SleepHours_SuicidalYNtable)*100
+prop.table(SleepHours_FeelBadYNtable)*100
+prop.table(HomeSituation_SuicidalYNtable)*100
+prop.table(HomeSituation_FeelBadYNtable)*100
+```
+In the above code chunk, I am running prop.tables based off of the tables I created in the immediately previous chunk to demonstrate the percentages of the variables 
+
+```{r}
+HHIncome_HomeSituation_SuicidalYNtable <- xtabs(~ HHIncome + HomeSituation + SuicidalYN, data = ResearchProjNHANESdata)
+ftable(HHIncome_HomeSituation_SuicidalYNtable)
+
+HHIncome_HomeSituation_FeelBadYNtable <- xtabs(~ HHIncome + HomeSituation + FeelBadYN, data = ResearchProjNHANESdata)
+ftable(HHIncome_HomeSituation_FeelBadYNtable)
+
+DoneDrugs_HomeSituation_SuicidalYNtable <- xtabs(~ DoneDrugs + HomeSituation + SuicidalYN, data = ResearchProjNHANESdata)
+ftable(DoneDrugs_HomeSituation_SuicidalYNtable)
+
+DoneDrugs_HomeSituation_FeelBadYNtable <- xtabs(~ DoneDrugs + HomeSituation + FeelBadYN, data = ResearchProjNHANESdata)
+ftable(DoneDrugs_HomeSituation_FeelBadYNtable)
+
+prop.table(DoneDrugs_HomeSituation_SuicidalYNtable)*100
+```
+
+```{r}
+ResearchProjNHANESdata%>%
+  group_by(SuicidalYN)%>%
+  drop_na(AgeCocaine)%>%
+  summarise(mean(AgeCocaine), sd(AgeCocaine), count=n())
+
+ResearchProjNHANESdata%>%
+  group_by(FeelBadYN)%>%
+  drop_na(AgeCocaine)%>%
+  summarise(mean(AgeCocaine), sd(AgeCocaine), count=n())
+
+ResearchProjNHANESdata%>%
+  group_by(SuicidalYN)%>%
+  drop_na(SleepHours)%>%
+  summarise(mean(SleepHours), sd(SleepHours), count=n())
+
+ResearchProjNHANESdata%>%
+  group_by(FeelBadYN)%>%
+  drop_na(SleepHours)%>%
+  summarise(mean(SleepHours), sd(SleepHours), count=n())
+```
+Here, I am gathering the means, standard deviations, and counts for AgeCocaine and SleepHours (i.e., my two continuous variables) by my two dependent variables. The first test, SuicidalYN by AgeCocaine, reveals a slightly lower mean for the age that those who responded "yes" to being suicidal than those who responded "no," with No = 21.09 ± 5.21 and Yes = 20.78 ± 5.18
+Further tests will be run to analyse the significance of this difference (See Line 235).
+Again, in the second test, examining FeelBadYN by AgeCocaine, the mean is slightly lower, where No = 21.26 ± 5.15 and Yes = 20.69 ± 5.27. 
+For the third test, SleepHours and SuicidalYN, the mean SleepHours is ever so slightly higher for those who responded "yes" to being suicidal. No = 7.59 ± 1.63 and Yes = 7.66 ± 2.13. 
+The same thing goes for the fourth test, with the same variation of 0.07 as in the previous test, though with different values. Here, No = 7.58 ± 1.60 and Yes = 7.64 ± 1.81.
+I hypothesise that these latter two results will not stand up to a test of statistical significance. 
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(FeelBadYN) %>%
+  drop_na(DoneDrugs) %>%
+  ggplot(aes(x = DoneDrugs, fill = FeelBadYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "PuOr") + 
+  labs(title = "Grouped FeelBad by DoneDrugs (NAs dropped)", x = "DoneDrugs", y = "Frequency") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(FeelBadYN) %>%
+  drop_na(HomeSituation) %>%
+  ggplot(aes(x = HomeSituation, fill = FeelBadYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "Pastel1") + labs(title = "Grouped FeelBad by HomeSituation (NAs dropped)", x = "HomeSituation", y = "Frequency") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(FeelBadYN) %>%
+  drop_na(HHIncome) %>%
+  ggplot(aes(x = HHIncome, fill = FeelBadYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "Accent") + labs(title = "Grouped FeelBad by HHIncome (NAs dropped)", x = "HHIncome", y = "Frequency") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+OverallHealth_FeelBadYNtable <- xtabs(~ OverallHealth + FeelBadYN, data=ResearchProjNHANESdata)
+OverallHealth_FeelBadYNtable
+
+ResearchProjNHANESdata %>%
+  drop_na(FeelBadYN) %>%
+  drop_na(OverallHealth) %>%
+  ggplot(aes(x = OverallHealth, fill = FeelBadYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "Set3") + labs(title = "Grouped FeelBad by OverallHealth (NAs dropped)", x = "OverallHealth", y = "Frequency") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+With all of these graphs, I seem to be encountering an issue wherein the graphs are not accurately representing the data that is shown in, for example, my tables. I am unsure why this issue is occurring. 
+*ANSWERED* Okay, so, this is an issue with how I am formatting the commands for the graphs. I am only calling on R to create the graph: it is only creating a graph with counts where people answered the question for FeelBadYN, not differentiating between 'yes' and 'no'. 
+Lines 208 through here are dedicated to FeelBadYN by the 4 categorical variables I am examining in this study. The subsequent lines (until Line 272) are dedicated to running essentially identical code, only changing FeelBadYN -> SuicidalYN. 
+These graphs are essentially useless and were on the whole a waste of time as far as I can currently see, however they may be useful for something, inshā'Allāh. 
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(SuicidalYN) %>%
+  drop_na(DoneDrugs) %>%
+  ggplot(aes(x = DoneDrugs, fill = SuicidalYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "PuOr") + 
+  labs(title = "Grouped Suicidal by DoneDrugs (NAs dropped)", x = "DoneDrugs", y = "Frequency") + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(SuicidalYN) %>%
+  drop_na(HomeSituation) %>%
+  ggplot(aes(x = HomeSituation, fill = SuicidalYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "Pastel1") + labs(title = "Grouped Suicidal by HomeSituation (NAs dropped)", x = "HomeSituation", y = "Frequency") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(SuicidalYN) %>%
+  drop_na(HHIncome) %>%
+  ggplot(aes(x = HHIncome, fill = SuicidalYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "Accent") + labs(title = "Grouped Suicidal by HHIncome (NAs dropped)", x = "HHIncome", y = "Frequency") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+```{r}
+ResearchProjNHANESdata %>%
+  drop_na(SuicidalYN) %>%
+  drop_na(OverallHealth) %>%
+  ggplot(aes(x = OverallHealth, fill = SuicidalYN)) + geom_bar(position = "dodge") + scale_fill_brewer(palette = "Set3") + labs(title = "Grouped Suicidal by OverallHealth (NAs dropped)", x = "OverallHealth", y = "Frequency") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+
+```{r}
+var.test(AgeCocaine~SuicidalYN, data=ResearchProjNHANESdata, alternative="two.sided")
+t.test(AgeCocaine~SuicidalYN, var.equal=TRUE, data=ResearchProjNHANESdata)
+```
+In this code chunk, I am looking at whether or not suicidal thought varies significantly by the age at which one does cocaine, and the results indicate that it does NOT vary significantly, the p-value is much greater than 0.05 (p = 0.73). 
+
+```{r}
+var.test(AgeCocaine~FeelBadYN, data=ResearchProjNHANESdata, alternative="two.sided")
+t.test(AgeCocaine~FeelBadYN, var.equal=TRUE, data=ResearchProjNHANESdata)
+```
+In this one, I am looking at FeelBadYN by AgeCocaine and again the results show no significance in the variation between the two variables as p = 0.25. 
+
+```{r}
+var.test(SleepHours~SuicidalYN, data=ResearchProjNHANESdata, alternative="two.sided")
+t.test(SleepHours~SuicidalYN, var.equal=FALSE, data=ResearchProjNHANESdata)
+```
+Here, I am comparing SuicidalYN and SleepHours for which the p-value is significant on the F-test but not on the t-test, I am unsure what this means but I will look into it at a later date, insha'Allāh. 
+*ANSWERED*: This means that the p-value is significant in terms of the variance of the two variable (F-test p-value < 0.05) but the p-value in terms of the differences between the means of the two variables is insignificant (t-test p-value > 0.05) which means that the findings are not significant. I.e., the F-test is only there to tell you whether  have "var.equal" be set to TRUE or FALSE. A significant p-value for the F-test means that you should set var.equal to FALSE. 
+Here, the findings are not statistically significant because p-value > 0.05 at 0.64
+
+```{r}
+var.test(SleepHours~FeelBadYN, data=ResearchProjNHANESdata, alternative="two.sided")
+t.test(SleepHours ~ FeelBadYN, var.equal = FALSE, data=ResearchProjNHANESdata)  
+```
+Here, as above, there is no statistically significant difference in the variation of the means of the two variables (p = 0.24), though there is significant difference between the variances, hence, var.equal = FALSE. 
+
+```{r}
+#1. Create the odds table:
+#odds_table_name <- table(data$IndVar, data$DepVar)
+#2. Run the oddsratio on the table you created:
+#oddsratio(odds_table_name)
+oddsratio(DoneDrugs_FeelBadYNtable)
+#3. Graph the results in a mosaic table:
+#ggplot(data=) + geom_mosaic(aes(x=product(IndVar), fill=DepVar), na.rm=TRUE, show.legend=FALSE) + labs(title="", x="", y="")
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(DoneDrugs), fill=FeelBadYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Feel Bad by Done Drugs", x="Done Drugs", y="Feel Bad") + scale_fill_brewer(palette = "Spectral")
+```
+From these results, we can state that (with a 95% CI), you have 43% lower odds of responding "Yes" to FeelBadYN if you have NOT done drugs. This result is statistically significant as the p-values for all three tests are significantly lower than 0.05 (p < 0.000001). 
+
+```{r}
+oddsratio(DoneDrugs_SuicidalYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(DoneDrugs), fill=SuicidalYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Suicidal by Done Drugs", x="Done Drugs", y="Suicidal") + scale_fill_brewer(palette = "Accent")
+```
+Here, those who answered "No" to having done drugs at any point had 65% lower odds of reporting suicidal thoughts compared to those who answered "Yes" to DoneDrugs. This relationship is statistically significant (p < 0.000001)
+
+```{r}
+oddsratio(HHIncome_FeelBadYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(HHIncome), fill=FeelBadYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Feel Bad by Annual Household Income", x="Household Income", y="Feel Bad") + scale_fill_brewer(palette = "Set1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+In the above code chunk, I am analysing FeelBadYN by HHIncome. A majority of the values of HHIncome are shown to be significant when compared to the reference value of "$0 to $4,999," with the exceptions of "$5,000 to $9,999" (p = 0.15), "10,000 to $14,999" (p = 0.92) "$15,000 to $19,999" (p = 0.16), "$20,000 to $24,999" (p = 0.07), and "Under $20,000" (0.72) where the p-value ≥ 0.05. The values for which the p-value was demonstrated to be significant will be analysed below.
+Firstly is "$25,000 to $34,999" (p = 0.008) with a result demonstrating that one has around 42% lower odds to answer "Yes" to FeelBadYN if they gave this range than if they had selected "$0 to $4,999."
+Next, "$35,000 to $44,999" (p = 0.007) demonstrates around 42% lower odds of answering FeelBadYN in the affirmative compared to the reference value. 
+Then, "$45,000 to $54,999" (p = 0.003) shows around 47% lower odds of responding "Yes" to FeelBadYN compared to those making less than $5,000 annually. 
+Next, "$55,000 to $64,999" (p = 0.0003) demonstrates a lowering of odds by around 55% compared to the reference value. 
+Continuing with "$65,000 to $74,999" (p = 0.0001), we see a decrease in the odds of responding "Yes" to FeelBadYN by around 60% as compared to those making less than five thousand dollars annually. 
+Nextly, we have the very broad "$20,000 and Over" (p = 0.00007). For this value, we see a decrease in the odds of answering in the affirmative to FeelBadYN of around 64%.
+Skipping "Under $20,000" as its result is not significant (see above), we arrive at the value "$75,000 to $99,999" (p = 0.00003). Here, we see that one's odds of answering "Yes" to FeelBadYN is around 59% lower than it could be predicted to be if one was making less than $5,000 annually. 
+Finally, we have "$100,000 and Over" (p < 0.000001). Here we see the greatest decrease in one's odds of responding "Yes" to FeelBadYN compared to our reference value: the odds are around 71% lower. 
+
+```{r}
+oddsratio(HHIncome_SuicidalYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(HHIncome), fill=SuicidalYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Suicidal by Annual Household Income", x="Household Income", y="Suicidal") + scale_fill_brewer(palette = "Set1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+In this analysis, we see that the majority of the values of HHIncome, when compared to our reference value of "$0 to $4,999" are not statistically significant in their variation. There are, however, four exceptions to this, which will be discussed below. 
+Firstly, "$65,000 to $74,999" demonstrates a statistically significant difference when compared to "$0 to $4,999" (p = 0.04). In terms of the odds themselves, we can, from this analysis, state that if one is making $65k-$74.999k annually, one has about 65% lower odds of answering "Yes" to SuicidalYN.
+Secondly, the very broad category of "$20,000 and over" demonstrates statistical significance (p = 0.02). From this analysis, we can state that one has around 31% lower odds of answering "Yes" to SuicidalYN if one is making ≥ $20k annually. 
+Next, the category of "$75,000 to $99,999" demonstrates statistical significance in its variation from our reference value (p = 0.01). This variation is demonstrated as having around 69% lower odds of answering "Yes" to SuicidalYN if making $75k-$99.999k compared to under $5k. 
+The final category which demonstrates a statistically significant variation from the reference value is "$100,000 and Over" (p = 0.001). The variation from the reference value is shown as around 77% lower odds of answering "Yes" to SuicidalYN if making ≥ $100,000. 
+
+```{r}
+oddsratio(HomeSituation_FeelBadYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(HomeSituation), fill=FeelBadYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Feel Bad by Home Situation", x="Home Situation", y="Feel Bad") + scale_fill_brewer(palette = "Dark2") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+In this test analysing FeelBadYN by HomeSituation, we can see that there is a statistically significant difference between the odds of answering "Yes" to FeelBadYN across the three HomeSituation values. If one is renting a home rather than simply owning it, one has 38% higher odds of answering "Yes" to FeelBadYN. For "Other," the results demonstrate an even greater difference: one has 79% higher odds of answering "Yes" to FeelBadYN if one's HomeSituation is "Other" than if it is "Owned." 
+
+```{r}
+oddsratio(HomeSituation_SuicidalYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(HomeSituation), fill=SuicidalYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Suicidal by Home Situation", x="Home Situation", y="Suicidal") + scale_fill_brewer(palette = "Set1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+In this test analysing SuicidalYN by HomeSituation, we find that there is very unlikely to be a statistically significant difference in SuicidalYN across the three HomeSituation values (p>0.05). 
+
+```{r}
+oddsratio(OverallHealth_FeelBadYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(OverallHealth), fill=FeelBadYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Feel Bad by Overall Health", x="Overall Health", y="Feel Bad") + scale_fill_brewer(palette = "Set1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+In this analysis, we are examining the variation of FeelBadYN across the values of OverallHealth. Comparing Very good to Excellent (our reference group), we see a statistically significant (p = 0.002) variation where one has about 47% higher odds of answering "Yes" to FeelBadYN. The variation remains statistically significant (p < 0.00001) when comparing Good to Excellent, stating that one has 120% higher odds of answering "Yes" to FeelBadYN. Moving down to Fair in comparison to Excellent, the results demonstrate that one has 428% higher odds of answering "Yes" to FeelBadYN, and this result is statistically significant (p < 0.000001). Finally, comparing Poor to Excellent, we have a significant result (p < 0.000001) that indicates astounding 1102% higher odds of answering "Yes" to FeelBadYN. 
+
+```{r}
+#OverallHealth_SuicidalYNtable <- xtabs(~ OverallHealth + SuicidalYN, data = ResearchProjNHANESdata)
+oddsratio(OverallHealth_SuicidalYNtable)
+ggplot(data=ResearchProjNHANESdata) + geom_mosaic(aes(x=product(OverallHealth), fill=SuicidalYN), na.rm=TRUE, show.legend=FALSE) + labs(title="Suicidal by Overall Health", x="Overall Health", y="Suicidal") + scale_fill_brewer(palette = "Set1") + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+When analysing the variation of SuicidalYN by the values of OverallHealth, we find a mix of statistically significant and insignificant values. Comparing Very good to Excellent (our reference value), we find a statistically insignificant variation where p = 0.40, greater than the 0.05 threshold for significance with a 95% Confidence Interval. Additionally, we find another insignificant variation between Good and Excellent; p = 0.10. However, in the comparison between Fair and Excellent, we find a statistically significant value where p < 0.000001. We see that one is 347% more likely to answer "Yes" to SuicidalYN when reporting one's overall health as Fair in comparison to our reference variable. As with Fair, we find a statistically significant value when comparing Poor and Excellent, with the p value again being less than (<) 0.000001. Here, one is around 669% more likely to answer SuicidalYN in the affirmative if one describes one's overall health as Poor as compared to Excellent. 
+
+```{r}
+#scatter plot code: #ggplot(aes(x=DepVar, y=IndVar), data=) + geom_point(color="") + geom_smooth(method=lm, color="") + labs(x="", y="") + theme_bw()
+ggplot(aes(x=SleepHours, y = AgeCocaine), data=ResearchProjNHANESdata) + geom_point(colour="blue") + geom_smooth(method=lm, colour = "lightgreen") + labs(x="SleepHours", y="AgeCocaine") + theme_bw()
+#correlation test code: cor.test(data$DepVar, data$IndVar, method="pearson")
+cor.test(ResearchProjNHANESdata$SleepHours, ResearchProjNHANESdata$AgeCocaine, method="pearson")
+```
+In this code chunk, I am running a correlation test on my two continuous variables (SleepHours and AgeCocaine). Both of these variables are independent variables in my study but I am simply running this to gain practice with correlations. I then have graphed these results onto a scatterplot. The p-value for this correlation test demonstrates a statistically insignificant relationship between the two continuous variables (p = 0.12). The correlation, as demonstrated in the scatterplot, is incredibly low: cor = 0.07. 
+
+```{r}
+SleepHours_AgeCocaine_fit <- lm(SleepHours ~ AgeCocaine, data=ResearchProjNHANESdata)
+summary(SleepHours_AgeCocaine_fit)
+```
+What is the regression equation for this model?
+SleepHours = 7.03 + AC(0.02)
+What is the multiple R-squared value for this equation?
+The Multiple R-squared value for this equation is 0.005
+What is the p-value?
+The p-value is greater than 0.05 at 0.12.
+What do these results indicate about the relationship between BMI and waist circumference?
+These results indicate a very weak correlation between the two variables and you are able to predict SleepHours using AgeCocaine with around 0.5% certainty (within the NHANES database). 
+
+```{r}
+AgeCocaine_SleepHours_fit <- lm(AgeCocaine ~ SleepHours, data=ResearchProjNHANESdata)
+summary(AgeCocaine_SleepHours_fit)
+```
+
+
+```{r}
+#1. find summary statistics of sample sizes, means, standard deviations, and 95% confidence intervals
+ResearchProjplotdata<- ResearchProjNHANESdata%>%
+  drop_na(SleepHours)%>%
+  group_by(FeelBadYN)%>%
+  summarize (n=n(),
+             mean = mean(SleepHours),
+             sd=sd(SleepHours),
+             ci=qt(0.975, df=n-1)*sd/sqrt(n))
+ResearchProjplotdata
+#2. test for group differences (ANOVA)
+ResearchProjfit <- aov(SleepHours~FeelBadYN, data=ResearchProjNHANESdata)
+summary(ResearchProjfit)
+#3. Plot group means and confidence intervals to visualize these group differences.
+library(ggplot2)
+ggplot(ResearchProjplotdata, aes(x=FeelBadYN, y=mean, group = 1)) +
+  geom_point(size=1, color="red") +
+             geom_errorbar(aes(ymin=mean-ci,
+                               ymax=mean+ci),
+                           width=.1) +
+               theme_bw() +
+               labs(x="",
+                    y="",
+                    title = "")
+```
+Here, there is a low F-value of 1.57 but this result is not statistically significant as the p-value is greater than 0.05 (p = 0.21). 
+
+```{r}
+ResearchProjSuicidalYNplotdata <- ResearchProjNHANESdata%>%
+  drop_na(SleepHours)%>%
+  group_by(SuicidalYN)%>%
+  summarize (n=n(),
+             mean = mean(SleepHours),
+             sd=sd(SleepHours),
+             ci=qt(0.975, df=n-1)*sd/sqrt(n))
+ResearchProjSuicidalYNplotdata
+#2. test for group differences (ANOVA)
+ResearchProjSuicidalYNfit <- aov(SleepHours~SuicidalYN, data=ResearchProjNHANESdata)
+summary(ResearchProjSuicidalYNfit)
+#3. Plot group means and confidence intervals to visualize these group differences.
+library(ggplot2)
+ggplot(ResearchProjSuicidalYNplotdata, aes(x=SuicidalYN, y=mean, group = 1)) +
+  geom_point(size=1, color="red") +
+             geom_errorbar(aes(ymin=mean-ci,
+                               ymax=mean+ci),
+                           width=.1) +
+               theme_bw() +
+               labs(x="",
+                    y="",
+                    title = "")
+```
+Here, there is a quite low F-value of 0.34 and this result again is shown to not be statistically significant as p > 0.05 (p = 0.56). 
+
+```{r}
+ResearchProjSuicidalYNAgeCocaineplotdata <- ResearchProjNHANESdata%>%
+  drop_na(AgeCocaine)%>%
+  group_by(SuicidalYN)%>%
+  summarize (n=n(),
+             mean = mean(AgeCocaine),
+             sd=sd(AgeCocaine),
+             ci=qt(0.975, df=n-1)*sd/sqrt(n))
+ResearchProjSuicidalYNAgeCocaineplotdata
+#2. test for group differences (ANOVA)
+ResearchProjSuicidalYNAgeCocainefit <- aov(AgeCocaine~SuicidalYN, data=ResearchProjNHANESdata)
+summary(ResearchProjSuicidalYNAgeCocainefit)
+#3. Plot group means and confidence intervals to visualize these group differences.
+library(ggplot2)
+ggplot(ResearchProjSuicidalYNAgeCocaineplotdata, aes(x=SuicidalYN, y=mean, group = 1)) +
+  geom_point(size=1, color="blue") +
+             geom_errorbar(aes(ymin=mean-ci,
+                               ymax=mean+ci),
+                           width=.1) +
+               theme_bw() +
+               labs(x="",
+                    y="",
+                    title = "")
+```
+The F-value for this test is quite low at 0.12 and this result is not statistically significant as p = 0.73. 
+
+```{r}
+ResearchProjFeelBadYNAgeCocaineplotdata <- ResearchProjNHANESdata%>%
+  drop_na(AgeCocaine)%>%
+  group_by(FeelBadYN)%>%
+  summarize (n=n(),
+             mean = mean(AgeCocaine),
+             sd=sd(AgeCocaine),
+             ci=qt(0.975, df=n-1)*sd/sqrt(n))
+ResearchProjFeelBadYNAgeCocaineplotdata
+#2. test for group differences (ANOVA)
+ResearchProjFeelBadYNAgeCocainefit <- aov(AgeCocaine~FeelBadYN, data=ResearchProjNHANESdata)
+summary(ResearchProjFeelBadYNAgeCocainefit)
+#3. Plot group means and confidence intervals to visualize these group differences.
+library(ggplot2)
+ggplot(ResearchProjFeelBadYNAgeCocaineplotdata, aes(x=FeelBadYN, y=mean, group = 1)) +
+  geom_point(size=1, color="blue") +
+             geom_errorbar(aes(ymin=mean-ci,
+                               ymax=mean+ci),
+                           width=.1) +
+               theme_bw() +
+               labs(x="",
+                    y="",
+                    title = "")
+```
+The results of this test demonstrate an F-value of 1.32 but this result is again insignificant as p = 0.25. 
